@@ -1,5 +1,9 @@
-# github repository: https://github.com/CFreeman217/coversheet.git
+'''
+Cover Sheet Generator:
+Produces a word docx coversheet for homework assignments
 
+github repository: https://github.com/CFreeman217/coversheet.git
+'''
 import csv
 import calendar
 import docx
@@ -7,9 +11,9 @@ import docx
 # for parsing data files.
 
 
-ref_word_doc = docx.Document('pyCoverSheet.docx')
+REF_WORD_DOC = docx.Document('pyCoverSheet.docx')
 
-class Umkc_course:
+class UmkcCourse:
     '''
     Represents an instance of the UMKC Class that I am taking this semester.
     '''
@@ -23,25 +27,29 @@ class Umkc_course:
         self.count = count
     @property
     def printname(self):
+        '''Generates a string of course information in a pretty format '''
         return '{} {} : {}'.format(self.prefix, self.course_number, self.title)
 
     @property
     def savestring(self):
-        return '{},{},{},{},{},{},{}\n'.format(self.prefix, 
-                                                self.course_number, 
-                                                self.title, 
-                                                self.professor, 
-                                                self.semester, 
-                                                self.year, 
-                                                self.count)
+        ''' Creates a string for saving into a csv format'''
+        return '{},{},{},{},{},{},{}\n'.format(self.prefix,
+                                               self.course_number,
+                                               self.title,
+                                               self.professor,
+                                               self.semester,
+                                               self.year,
+                                               self.count)
     def addfile(self, filename):
+        ''' Writes the save string in CSV format to the file name passed '''
         with open(filename, 'a') as savefile:
             savefile.write(self.savestring)
 
 def user_courseinput(in_num):
+    '''Uses input prompts to generate a UI_NEW_COURSE_SELECT instance of the class UmkcClass'''
     pfx = input('Enter Prefix [ME] : ')
     if pfx == '':
-        pfx = 'ME' 
+        pfx = 'ME'
     n_course = input('Enter Course Number [{}]: '.format(in_num))
     if n_course == '':
         n_course = str(in_num)
@@ -54,75 +62,84 @@ def user_courseinput(in_num):
     if y_course == '':
         y_course = '2018'
     c_course = 0
-    coursedict[n_course] = Umkc_course(pfx, n_course, t_course, i_course, s_course, y_course, c_course)
-    coursedict[n_course].addfile('savefile.csv')
+    COURSEDICT[n_course] = UmkcCourse(pfx,
+                                      n_course,
+                                      t_course,
+                                      i_course,
+                                      s_course,
+                                      y_course,
+                                      c_course)
+    COURSEDICT[n_course].addfile('savefile.csv')
 
 def display_courseload():
+    '''Generates a display of the currently loaded courses in the savefile csv'''
     print('\nCurrently Loaded Courses : \n')
-    for courseno in coursedict.keys():
-        print('{} : {}'.format(courseno, coursedict[courseno].printname))
- 
+    for courseno in COURSEDICT.keys():
+        print('{} : {}'.format(courseno, COURSEDICT[courseno].printname))
+
 # Function parses tab delimited file information
-# fileName must be within the current working directory
-def readFile(fileName):
+# filename must be within the current working directory
+def readfile(filename):
+    '''Reads CSV file information and in this case, passes it into the course class'''
     c_dict = {}
     # Using a 'with' statement is safer than
     # needing to remember to close the file afer reading
-    with open(fileName) as file:
+    with open(filename) as file:
         # Delimiter is the character separating the values
         reader = csv.reader(file)
         # Generates a list of the stored information
         data = list(reader)
     # Returns the list of data gathered from the file
-    
     for entry in data:
-        c_dict[entry[1]] = Umkc_course(entry[0], 
-                                            entry[1], 
-                                            entry[2], 
-                                            entry[3], 
-                                            entry[4], 
-                                            entry[5], 
-                                            entry[6])
+        c_dict[entry[1]] = UmkcCourse(entry[0],
+                                      entry[1],
+                                      entry[2],
+                                      entry[3],
+                                      entry[4],
+                                      entry[5],
+                                      entry[6])
     return c_dict
 
-def stripDate(in_str):
+def stripdate(in_str):
+    '''Cuts the input name into desired date format.
+    Uses the calendar built-in library to produce a string month.'''
     month = int(in_str[:2])
     day = int(in_str[2:4])
     year = int('20' + in_str[4:])
     return '{} {} {}'.format(day, calendar.month_name[month], year)
 
 
-coursedict = readFile('savefile.csv')
+COURSEDICT = readfile('savefile.csv')
 
 
 display_courseload()
-c_select = input('Generate Homework Coversheet for class : ')
-if c_select not in coursedict.keys():
-    new = input('New Course Number Detected...\n\tCreate New Entry? [(y)/n] : ')
-    if new == '' or new.lower() == 'y':
-        user_courseinput(c_select)
-a_num = input('Assignment Number ({}) : '.format(coursedict[c_select].count))
-if a_num == '':
-    a_num = coursedict[c_select].count
+COURSE_SELECT = input('Generate Homework Coversheet for class : ')
+if COURSE_SELECT not in COURSEDICT.keys():
+    UI_NEW_COURSE_SELECT = input('New Course Number Detected...\n\tCreate New Entry? [(y)/n] : ')
+    if UI_NEW_COURSE_SELECT == '' or UI_NEW_COURSE_SELECT.lower() == 'y':
+        user_courseinput(COURSE_SELECT)
+ASSIGNMENT_NUMBER = input('Assignment Number ({}) : '.format(COURSEDICT[COURSE_SELECT].count))
+if ASSIGNMENT_NUMBER == '':
+    ASSIGNMENT_NUMBER = COURSEDICT[COURSE_SELECT].count
 while True:
-    ddate = input('Enter Due Date [MMDDYY] : ')
-    if ddate.isdigit() and len(ddate) == 6:
-        due_date = stripDate(ddate)
+    DUEDATE = input('Enter Due Date [MMDDYY] : ')
+    if DUEDATE.isdigit() and len(DUEDATE) == 6:
+        DUEDATE_STRING = stripdate(DUEDATE)
         break
-    print('Enter Date in the form : MMDDYY')      
+    print('Enter Date in the form : MMDDYY')
 
-line_1 = coursedict[c_select].printname
-line_2 = '{} - {} {}'.format(coursedict[c_select].professor,
-                            coursedict[c_select].semester,
-                            coursedict[c_select].year)
-line_3 = 'Homework Assignment No. {}'.format(a_num)
-line_4 = due_date
-
-
+LINE_1 = COURSEDICT[COURSE_SELECT].printname
+LINE_2 = '{} - {} {}'.format(COURSEDICT[COURSE_SELECT].professor,
+                             COURSEDICT[COURSE_SELECT].semester,
+                             COURSEDICT[COURSE_SELECT].year)
+LINE_3 = 'Homework Assignment No. {}'.format(ASSIGNMENT_NUMBER)
+LINE_4 = DUEDATE_STRING
 
 
-ref_word_doc.add_paragraph(line_1, 'Subtitle')
-ref_word_doc.add_paragraph(line_2, 'Subtitle')
-ref_word_doc.add_paragraph(line_3, 'Subtitle')
-ref_word_doc.add_paragraph(line_4, 'Subtitle')
-ref_word_doc.save('ME{}_HW{}_coversheet_{}.docx'.format(c_select, a_num, ddate))
+
+
+REF_WORD_DOC.add_paragraph(LINE_1, 'Subtitle')
+REF_WORD_DOC.add_paragraph(LINE_2, 'Subtitle')
+REF_WORD_DOC.add_paragraph(LINE_3, 'Subtitle')
+REF_WORD_DOC.add_paragraph(LINE_4, 'Subtitle')
+REF_WORD_DOC.save('ME{}_HW{}_coversheet_{}.docx'.format(COURSE_SELECT, ASSIGNMENT_NUMBER, DUEDATE))
