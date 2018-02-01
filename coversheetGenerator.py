@@ -5,7 +5,7 @@ import docx
 import calendar
 
 doc = docx.Document('pyCoverSheet.docx')
-
+# hello
 class UMKC_Course:
     def __init__(self, prefix, c_num, c_title, instructor, sem, year, count):
         self.prefix = prefix
