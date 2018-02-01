@@ -1,8 +1,34 @@
 #!/usr/bin/env python
 # https://github.com/CFreeman217/coversheet.git
 import docx
+
 import calendar
+
 doc = docx.Document('pyCoverSheet.docx')
+
+class UMKC_Course:
+    def __init__(self, prefix, c_num, c_title, instructor, sem, year, count):
+        self.prefix = prefix
+        self.course_number = c_num
+        self.title = c_title
+        self.professor = instructor
+        self.semester = sem
+        self.year = year
+        self.count = count
+    
+    @property
+    def printname(self):
+        return '{} {} : {}'.format(self.prefix, self.course_number, self.title)
+
+    @property
+    def savestring(self):
+        return '{},{},{},{},{},{},{}\n'.format(self.prefix, self.course_number, self.title, self.professor, self.semester, self.year, self.count)
+
+    def savefile(self, filename):
+        with open(filename, 'w') as savefile:
+            savefile.write(self.savestring)
+
+
 
 courses = {'380' : ('ME 380 : Manufacturing Methods', 'Prof. B. Hanlin'),
             '352' : ('ME 352 : Instrumentation and Measurements', 'Prof. J. Mahoney'),
