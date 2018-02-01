@@ -1,14 +1,18 @@
-#!/usr/bin/env python
-# https://github.com/CFreeman217/coversheet.git
+# github repository: https://github.com/CFreeman217/coversheet.git
+
+import csv
+import calendar
 import docx
 # The built-in comma-separated-value library is useful
 # for parsing data files.
-import csv
-import calendar
 
-doc = docx.Document('pyCoverSheet.docx')
 
-class UMKC_Course:
+ref_word_doc = docx.Document('pyCoverSheet.docx')
+
+class Umkc_course:
+    '''
+    Represents an instance of the UMKC Class that I am taking this semester.
+    '''
     def __init__(self, prefix, c_num, c_title, instructor, sem, year, count):
         self.prefix = prefix
         self.course_number = c_num
@@ -17,15 +21,19 @@ class UMKC_Course:
         self.semester = sem
         self.year = year
         self.count = count
-    
     @property
     def printname(self):
         return '{} {} : {}'.format(self.prefix, self.course_number, self.title)
 
     @property
     def savestring(self):
-        return '{},{},{},{},{},{},{}\n'.format(self.prefix, self.course_number, self.title, self.professor, self.semester, self.year, self.count)
-
+        return '{},{},{},{},{},{},{}\n'.format(self.prefix, 
+                                                self.course_number, 
+                                                self.title, 
+                                                self.professor, 
+                                                self.semester, 
+                                                self.year, 
+                                                self.count)
     def addfile(self, filename):
         with open(filename, 'a') as savefile:
             savefile.write(self.savestring)
@@ -46,7 +54,7 @@ def user_courseinput(in_num):
     if y_course == '':
         y_course = '2018'
     c_course = 0
-    coursedict[n_course] = UMKC_Course(pfx, n_course, t_course, i_course, s_course, y_course, c_course)
+    coursedict[n_course] = Umkc_course(pfx, n_course, t_course, i_course, s_course, y_course, c_course)
     coursedict[n_course].addfile('savefile.csv')
 
 def display_courseload():
@@ -68,7 +76,7 @@ def readFile(fileName):
     # Returns the list of data gathered from the file
     
     for entry in data:
-        c_dict[entry[1]] = UMKC_Course(entry[0], 
+        c_dict[entry[1]] = Umkc_course(entry[0], 
                                             entry[1], 
                                             entry[2], 
                                             entry[3], 
@@ -113,8 +121,8 @@ line_4 = due_date
 
 
 
-doc.add_paragraph(line_1, 'Subtitle')
-doc.add_paragraph(line_2, 'Subtitle')
-doc.add_paragraph(line_3, 'Subtitle')
-doc.add_paragraph(line_4, 'Subtitle')
-doc.save('ME{}_HW{}_coversheet_{}.docx'.format(c_select, a_num, ddate))
+ref_word_doc.add_paragraph(line_1, 'Subtitle')
+ref_word_doc.add_paragraph(line_2, 'Subtitle')
+ref_word_doc.add_paragraph(line_3, 'Subtitle')
+ref_word_doc.add_paragraph(line_4, 'Subtitle')
+ref_word_doc.save('ME{}_HW{}_coversheet_{}.docx'.format(c_select, a_num, ddate))
