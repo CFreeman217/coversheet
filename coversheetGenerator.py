@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 # https://github.com/CFreeman217/coversheet.git
 import docx
-
+# The built-in comma-separated-value library is useful
+# for parsing data files.
+import csv
 import calendar
 
 doc = docx.Document('pyCoverSheet.docx')
@@ -24,54 +26,95 @@ class UMKC_Course:
     def savestring(self):
         return '{},{},{},{},{},{},{}\n'.format(self.prefix, self.course_number, self.title, self.professor, self.semester, self.year, self.count)
 
-    def savefile(self, filename):
-        with open(filename, 'w') as savefile:
+    def addfile(self, filename):
+        with open(filename, 'a') as savefile:
             savefile.write(self.savestring)
 
+def user_courseinput(in_num):
+    pfx = input('Enter Prefix [ME] : ')
+    if pfx == '':
+        pfx = 'ME' 
+    n_course = input('Enter Course Number [{}]: '.format(in_num))
+    if n_course == '':
+        n_course = str(in_num)
+    t_course = input('Enter Course Title : ').title()
+    i_course = input('Enter Instructor Name :').title()
+    s_course = input('Enter Semester [(f)/s]: ').title()
+    if s_course == '':
+        s_course = 'Fall'
+    y_course = input('Enter Year (2018) : ')
+    if y_course == '':
+        y_course = '2018'
+    c_course = 0
+    coursedict[n_course] = UMKC_Course(pfx, n_course, t_course, i_course, s_course, y_course, c_course)
+    coursedict[n_course].addfile('savefile.csv')
 
-
-courses = {'380' : ('ME 380 : Manufacturing Methods', 'Prof. B. Hanlin'),
-            '352' : ('ME 352 : Instrumentation and Measurements', 'Prof. J. Mahoney'),
-            '306' : ('ME 306 : Computer Aided Engineering', 'Dr. A. Stylianou'),
-            '385' : ('ME 385 : System Dynamics', 'Dr. D. Justice'),
-            '399' : ('ME 399 : Heat and Mass Transfer', 'Prof. J. Mahoney')}
+def display_courseload():
+    print('\nCurrently Loaded Courses : \n')
+    for courseno in coursedict.keys():
+        print('{} : {}'.format(courseno, coursedict[courseno].printname))
+ 
+# Function parses tab delimited file information
+# fileName must be within the current working directory
+def readFile(fileName):
+    c_dict = {}
+    # Using a 'with' statement is safer than
+    # needing to remember to close the file afer reading
+    with open(fileName) as file:
+        # Delimiter is the character separating the values
+        reader = csv.reader(file)
+        # Generates a list of the stored information
+        data = list(reader)
+    # Returns the list of data gathered from the file
+    
+    for entry in data:
+        c_dict[entry[1]] = UMKC_Course(entry[0], 
+                                            entry[1], 
+                                            entry[2], 
+                                            entry[3], 
+                                            entry[4], 
+                                            entry[5], 
+                                            entry[6])
+    return c_dict
 
 def stripDate(in_str):
     month = int(in_str[:2])
     day = int(in_str[2:4])
     year = int('20' + in_str[4:])
     return '{} {} {}'.format(day, calendar.month_name[month], year)
-    
 
-print('\n Current Courses: \n')
-for ckey in courses.keys():
-    print(ckey + ' : ' + courses[ckey][0] )
+
+coursedict = readFile('savefile.csv')
+
+
+display_courseload()
 c_select = input('Generate Homework Coversheet for class : ')
-a_num = input('Assignment Number : ')
-# problems = input('Assignment Problem Numbers (String) (Optional) : \n')
-date_in = input('Due date MMDDYY : ')
-duedate = stripDate(date_in)
+if c_select not in coursedict.keys():
+    new = input('New Course Number Detected...\n\tCreate New Entry? [(y)/n] : ')
+    if new == '' or new.lower() == 'y':
+        user_courseinput(c_select)
+a_num = input('Assignment Number ({}) : '.format(coursedict[c_select].count))
+if a_num == '':
+    a_num = coursedict[c_select].count
+while True:
+    ddate = input('Enter Due Date [MMDDYY] : ')
+    if ddate.isdigit() and len(ddate) == 6:
+        due_date = stripDate(ddate)
+        break
+    print('Enter Date in the form : MMDDYY')      
 
-
-line_1 = courses[c_select][0]
-line_2 = '{} - Spring 2018'.format(courses[c_select][1])
+line_1 = coursedict[c_select].printname
+line_2 = '{} - {} {}'.format(coursedict[c_select].professor,
+                            coursedict[c_select].semester,
+                            coursedict[c_select].year)
 line_3 = 'Homework Assignment No. {}'.format(a_num)
-# line_4 = problems
-line_5 = duedate
+line_4 = due_date
+
+
+
 
 doc.add_paragraph(line_1, 'Subtitle')
 doc.add_paragraph(line_2, 'Subtitle')
 doc.add_paragraph(line_3, 'Subtitle')
-doc.add_paragraph(line_5, 'Subtitle')
-# doc.paragraphs[1] = line_1
-# doc.paragraphs[1].style = 'Subtitle'
-# doc.paragraphs[2] = line_2
-# doc.paragraphs[2].style = 'Subtitle'
-# doc.paragraphs[3] = line_3
-# doc.paragraphs[3].style = 'Subtitle'
-# doc.paragraphs[4] = line_4
-# doc.paragraphs[4].style = 'Subtitle'
-# doc.paragraphs[5] = line_5
-# doc.paragraphs[5].style = 'Subtitle'
-
-doc.save('ME{}_HW{}_coversheet_{}.docx'.format(c_select, a_num, date_in))
+doc.add_paragraph(line_4, 'Subtitle')
+doc.save('ME{}_HW{}_coversheet_{}.docx'.format(c_select, a_num, ddate))
