@@ -74,8 +74,8 @@ def user_courseinput(in_num):
 def display_courseload():
     '''Generates a display of the currently loaded courses in the savefile csv'''
     print('\nCurrently Loaded Courses : \n')
-    for courseno in COURSEDICT.keys():
-        print('{} : {}'.format(courseno, COURSEDICT[courseno].printname))
+    for dictkey, course in COURSEDICT.items():
+        print('{} : {}'.format(dictkey, course.printname))
 
 # Function parses tab delimited file information
 # filename must be within the current working directory
