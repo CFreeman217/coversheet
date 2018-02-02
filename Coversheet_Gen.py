@@ -14,7 +14,7 @@ FUTURE WORK:
     * The goal here is to get a variable that changes each time the program is run.
       The next time the user selects the course, the program selects 1 greater than
       the previous print.
- - Find a better way to organize the CSV file information. 
+ - Find a better way to organize the CSV file information.
  - Implement a GUI
 
 github repository: https://github.com/CFreeman217/coversheet.git
