@@ -29,7 +29,7 @@ class UmkcCourse:
     def printname(self):
         '''Generates a string of course information in a pretty format '''
         return '{} {} : {}'.format(self.prefix, self.course_number, self.title)
-    
+
     @property
     def instructorterm(self):
         '''Generates string of instructor and term information for the second line of text'''
