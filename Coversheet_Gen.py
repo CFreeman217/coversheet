@@ -29,7 +29,13 @@ class UmkcCourse:
     def printname(self):
         '''Generates a string of course information in a pretty format '''
         return '{} {} : {}'.format(self.prefix, self.course_number, self.title)
-
+    
+    @property
+    def instructorterm(self):
+        '''Generates string of instructor and term information for the second line of text'''
+        return '{} - {} {}'.format(COURSEDICT[COURSE_SELECT].professor,
+                                   COURSEDICT[COURSE_SELECT].semester,
+                                   COURSEDICT[COURSE_SELECT].year)
     @property
     def savestring(self):
         ''' Creates a string for saving into a csv format'''
@@ -40,6 +46,7 @@ class UmkcCourse:
                                                self.semester,
                                                self.year,
                                                self.count)
+
     def addfile(self, filename):
         ''' Writes the save string in CSV format to the file name passed '''
         with open(filename, 'a') as savefile:
@@ -128,18 +135,15 @@ while True:
         break
     print('Enter Date in the form : MMDDYY')
 
-LINE_1 = COURSEDICT[COURSE_SELECT].printname
-LINE_2 = '{} - {} {}'.format(COURSEDICT[COURSE_SELECT].professor,
-                             COURSEDICT[COURSE_SELECT].semester,
-                             COURSEDICT[COURSE_SELECT].year)
-LINE_3 = 'Homework Assignment No. {}'.format(ASSIGNMENT_NUMBER)
-LINE_4 = DUEDATE_STRING
 
 
 
 
-REF_WORD_DOC.add_paragraph(LINE_1, 'Subtitle')
-REF_WORD_DOC.add_paragraph(LINE_2, 'Subtitle')
-REF_WORD_DOC.add_paragraph(LINE_3, 'Subtitle')
-REF_WORD_DOC.add_paragraph(LINE_4, 'Subtitle')
+
+
+
+REF_WORD_DOC.add_paragraph(COURSEDICT[COURSE_SELECT].printname, 'Subtitle')
+REF_WORD_DOC.add_paragraph(COURSEDICT[COURSE_SELECT].instructorterm, 'Subtitle')
+REF_WORD_DOC.add_paragraph('Homework Assignment No. {}'.format(ASSIGNMENT_NUMBER), 'Subtitle')
+REF_WORD_DOC.add_paragraph(DUEDATE_STRING, 'Subtitle')
 REF_WORD_DOC.save('ME{}_HW{}_coversheet_{}.docx'.format(COURSE_SELECT, ASSIGNMENT_NUMBER, DUEDATE))
