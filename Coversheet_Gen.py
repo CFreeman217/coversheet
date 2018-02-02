@@ -2,6 +2,21 @@
 Cover Sheet Generator:
 Produces a word docx coversheet for homework assignments
 
+FUTURE WORK:
+ - Use a counter to generate an ID number for each member of the course class.
+    * The goal is to avoid needing to create a dictionary for handling each instance
+ - Figure out a better way to collect the information to initiate an instance.
+    * Passing 7 arguments in and out is a bit bulky.
+ - Collect the assignment information and display it where feasible (System Dynamics)
+ - Collect schedule information and make a guess for the intended assignment due date.
+ - Use line addressing (possibly associated with the id number from #1) to overwrite
+    course info so there can be a count associated with assignment number.
+    * The goal here is to get a variable that changes each time the program is run.
+      The next time the user selects the course, the program selects 1 greater than
+      the previous print.
+ - Find a better way to organize the CSV file information. 
+ - Implement a GUI
+
 github repository: https://github.com/CFreeman217/coversheet.git
 '''
 import csv
