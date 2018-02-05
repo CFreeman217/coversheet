@@ -7,6 +7,8 @@ FUTURE WORK:
     * The goal is to avoid needing to create a dictionary for handling each instance
  - Figure out a better way to collect the information to initiate an instance.
     * Passing 7 arguments in and out is a bit bulky.
+    ? Parse the file into a list, and feed the list into the class
+        - solves addressing and overwriting issues
  - Collect the assignment information and display it where feasible (System Dynamics)
  - Collect schedule information and make a guess for the intended assignment due date.
  - Use line addressing (possibly associated with the id number from #1) to overwrite
@@ -15,6 +17,7 @@ FUTURE WORK:
       The next time the user selects the course, the program selects 1 greater than
       the previous print.
  - Find a better way to organize the CSV file information.
+    * Sort and edit functionality.
  - Implement a GUI
 
 github repository: https://github.com/CFreeman217/coversheet.git
