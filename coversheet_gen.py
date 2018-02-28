@@ -168,7 +168,7 @@ while True:
 
 
 
-
+REF_WORD_DOC.add_paragraph('Clay Freeman', 'Title')
 REF_WORD_DOC.add_paragraph(COURSEDICT[COURSE_SELECT].printname, 'Subtitle')
 REF_WORD_DOC.add_paragraph(COURSEDICT[COURSE_SELECT].instructorterm, 'Subtitle')
 REF_WORD_DOC.add_paragraph(COURSEDICT[COURSE_SELECT].assignment, 'Subtitle')
