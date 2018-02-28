@@ -54,6 +54,15 @@ class UmkcCourse:
         return '{} - {} {}'.format(COURSEDICT[COURSE_SELECT].professor,
                                    COURSEDICT[COURSE_SELECT].semester,
                                    COURSEDICT[COURSE_SELECT].year)
+
+    @property
+    def assignment(self):
+        if self.course_number == '380':
+            return 'Chapter {} Homework'.format(ASSIGNMENT_NUMBER)
+        else:
+            return 'Homework Assignment No. {}'.format(ASSIGNMENT_NUMBER)
+
+
     @property
     def savestring(self):
         ''' Creates a string for saving into a csv format'''
@@ -162,6 +171,6 @@ while True:
 
 REF_WORD_DOC.add_paragraph(COURSEDICT[COURSE_SELECT].printname, 'Subtitle')
 REF_WORD_DOC.add_paragraph(COURSEDICT[COURSE_SELECT].instructorterm, 'Subtitle')
-REF_WORD_DOC.add_paragraph('Homework Assignment No. {}'.format(ASSIGNMENT_NUMBER), 'Subtitle')
+REF_WORD_DOC.add_paragraph(COURSEDICT[COURSE_SELECT].assignment, 'Subtitle')
 REF_WORD_DOC.add_paragraph(DUEDATE_STRING, 'Subtitle')
 REF_WORD_DOC.save('ME{}_HW{}_coversheet_{}.docx'.format(COURSE_SELECT, ASSIGNMENT_NUMBER, DUEDATE))
