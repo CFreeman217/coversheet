@@ -40,7 +40,7 @@ y_inside    |      |              |      |     y_outside
 
     # Error estimation and iteration limits
     c_error = 100 # Current error percentage
-    er_max = node_size/3 # Maximum error tolerance
+    er_max = 1 # Maximum error tolerance
     c_iter = 0 # Instantiate iterations
     iter_max = 1000 # Maximum iterations
 
@@ -255,7 +255,7 @@ y_inside    |      |              |      |     y_outside
     # axes. Sets padding for the plot. Pyplot is still easier to use than excel.
     plt.subplots_adjust(left=.15, right=0.99, bottom=.2, top=.85)
     # SAVE IT AND YOU ARE DONE! YAY
-    plt.savefig('ME_399_chimney_problem.pdf', bbox_inches='tight')
+    plt.savefig('ME_399_chimney_diagram.pdf', bbox_inches='tight')
     # By default the plot collapses after the show command, so this line must be the last one to execute
     plt.show()
 
