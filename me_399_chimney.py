@@ -1,4 +1,5 @@
 import numpy as np
+import pprint
 import matplotlib.pyplot as plt
 from matplotlib import cm
 
@@ -30,7 +31,7 @@ y_inside    |      |              |      |     y_outside
     uses symmetry to break the plot into quarters and then rebuilds the full chimney size once the
     mean error threshold has been met.
     '''
-    node_size = 5 # Square node side length (mm)
+    node_size = 10 # Square node side length (mm)
 
     # Geometry
     x_outside = 180 # mm
@@ -57,6 +58,8 @@ y_inside    |      |              |      |     y_outside
     # get the edge values to calculate
     x_max = int((x_outside/(2)) + node_size)
     y_max = int((y_outside/(2)) + node_size)
+    # Convert the node length to meters
+    delta_x = node_size/1000
     # The inside corner point prevents the generation of points that are outside
     # the geometry and gives a reference to the location of the inside edges
     inside_corner = (x_max-(x_inside/2), y_max-(y_inside/2))
@@ -93,9 +96,9 @@ y_inside    |      |              |      |     y_outside
                 t_above = data_points['({},{})'.format(data_points[point]['y_coord'] + node_size ,data_points[point]['x_coord'])]['temp']
                 t_right = data_points['({},{})'.format(data_points[point]['y_coord'] ,data_points[point]['x_coord'] + node_size)]['temp']
                 # This calculation is straighforwward and only relies on the nodes above or below. The rest of the examples need more geometry
-                data_points[point]['temp'] = (t_above + t_right + (2 * h_out * o_temp) / k_brick) / (2 * ((h_out * node_size/k_brick) + 1))
+                data_points[point]['temp'] = (t_above + t_right + ((2 * h_out * o_temp * delta_x) / k_brick)) / (2 * ((h_out * delta_x/k_brick) + 1))
 
-            elif (data_points[point]['x_coord'] == 0) ^ (data_points[point]['y_coord'] == 0):
+            elif (data_points[point]['x_coord'] == 0) ^ (data_points[point]['y_coord'] == 0) and (data_points[point]['y_coord'] != data_points[point]['x_coord']):
                 # Outside Edge
                 # CASE 3
                 # print('Outside Edge : {} = {}'.format(point, data_points[point]['temp']))
@@ -108,23 +111,36 @@ y_inside    |      |              |      |     y_outside
                 right_ref = '({},{})'.format(data_points[point]['x_coord'] + node_size, data_points[point]['y_coord'])
                 # Here is where we try to gather the temperature information for the node above the current node
                 try:
-                    vertical = data_points[above_ref]['temp']
+                    above = data_points[above_ref]['temp']
                 except:
                     # If we have made it to this part of the code, then the program must be computing the edge piece
                     # in the upper left edge of the section we are calculating. It turns out that by symmetry in the
                     # formula, we can just count the value for the node below as the same as the node above.
-                    vertical = data_points[below_ref]['temp']
+                    above = data_points[below_ref]['temp']
+                # All of these points should have below points for calculating the bottom left corner of the chimney profile
                 try:
-                    # Here we are doing the same thing for the horizontal points.
-                    horiz = data_points[right_ref]['temp']
+                    below = data_points[below_ref]['temp']
+                except:
+                    below = 0
+                try:
+                    # Here we are doing the same thing for the horizontal points
+                    right = data_points[right_ref]['temp']
                 except:
                     # See the previous comment in the except statement above
-                    horiz = data_points[left_ref]['temp']
-                # Perform the calculation and store the data point temperature in this node
-                data_points[point]['temp'] = ((2 * vertical + 2 * horiz) + (2 * node_size * h_out * o_temp / k_brick)) / (2 * ((h_out * node_size / k_brick) + 2))
+                    right = data_points[left_ref]['temp']
+                # All of these points should have left points for calculating the bottom left corner of the chimney profile
+                try:
+                    left = data_points[left_ref]['temp']
+                except:
+                    left = 0
+                if (data_points[point]['x_coord'] == 0):
+                    data_points[point]['temp'] = (((2 * right) + above + below) + (2 * h_out * delta_x * o_temp / k_brick)) / (2 * ((h_out * delta_x / k_brick) + 2))
+                else:
+                    data_points[point]['temp'] = (((2 * above) + left + right) + (2 * h_out * delta_x * o_temp / k_brick)) / (2 * ((h_out * delta_x / k_brick) + 2))
 
             elif (data_points[point]['x_coord'] == inside_corner[0] - node_size and data_points[point]['y_coord'] > inside_corner[1] - node_size) ^ (data_points[point]['y_coord'] == inside_corner[1] - node_size and data_points[point]['x_coord'] > inside_corner[0] - node_size):
                 # Inside Edge
+                # CASE 3
                 # print('Inside Edge : {} = {}'.format(point, data_points[point]['temp']))
                 # For this area, we needed to generate strings to be used as keys that can access information from a neighboring point in the array
                 # I copied and pasted this because it throws an error in case 1 and it was slightly faster to do this than write and debug
@@ -135,21 +151,26 @@ y_inside    |      |              |      |     y_outside
                 right_ref = '({},{})'.format(data_points[point]['x_coord'] + node_size, data_points[point]['y_coord'])
                 # Here is where we try to gather the temperature information for the node above the current node
                 try:
-                    vertical = data_points[above_ref]['temp']
+                    above = data_points[above_ref]['temp']
                 except:
                     # If we have made it to this part of the code, then the program must be computing the edge piece
                     # in the upper left edge of the section we are calculating. It turns out that by symmetry in the
                     # formula, we can just count the value for the node below as the same as the node above.
-                    vertical = data_points[below_ref]['temp']
+                    above = data_points[below_ref]['temp']
+                # All of these points should have below points for calculating the bottom left corner of the chimney profile
+                below = data_points[below_ref]['temp']
                 try:
-                    # Here we are doing the same thing for the horizontal points.
-                    horiz = data_points[right_ref]['temp']
+                    # Here we are doing the same thing for the horizontal points
+                    right = data_points[right_ref]['temp']
                 except:
                     # See the previous comment in the except statement above
-                    horiz = data_points[left_ref]['temp']
-                # Perform the calculation and store the data point temperature in this node
-                data_points[point]['temp'] = ((2 * vertical + 2 * horiz) + (2 * node_size * h_in * i_temp / k_brick)) / (2 * ((h_in * node_size / k_brick) + 2))
-
+                    right = data_points[left_ref]['temp']
+                # All of these points should have left points for calculating the bottom left corner of the chimney profile
+                left = data_points[left_ref]['temp']
+                if (data_points[point]['x_coord'] == inside_corner[0] - node_size and data_points[point]['y_coord'] > inside_corner[1] - node_size):
+                    data_points[point]['temp'] = (((2 * left) + above + below) + (2 * h_in * delta_x * i_temp / k_brick)) / (2 * ((h_in * delta_x / k_brick) + 2))
+                else:
+                    data_points[point]['temp'] = (((2 * below) + left + right) + (2 * h_in * delta_x * i_temp / k_brick)) / (2 * ((h_in * delta_x / k_brick) + 2))
             elif (data_points[point]['x_coord'] == inside_corner[0] - node_size) and (data_points[point]['y_coord'] == inside_corner[1] - node_size):
                 # Inside Corner
                 # print('Inside Corner : {} = {}'.format(point, data_points[point]['temp']))
@@ -167,7 +188,7 @@ y_inside    |      |              |      |     y_outside
                 right = data_points[right_ref]['temp']
                 left = data_points[left_ref]['temp']
                 # Perform the calculation and store the data point temperature in this node
-                data_points[point]['temp'] = (2 * (left + below) + (right + above) + (2 * h_in * node_size * i_temp / k_brick))/ (2 * (3 + h_in * node_size / k_brick))
+                data_points[point]['temp'] = (2 * (left + below) + (right + above) + (2 * h_in * delta_x * i_temp / k_brick))/ (2 * (3 + h_in * delta_x / k_brick))
 
             else:
                 # Interior piece
@@ -205,7 +226,7 @@ y_inside    |      |              |      |     y_outside
         # c_error contains the current error for this iteration
         c_error = point_error/len(data_points)
         print(c_error)
-
+    pprint.pprint(data_points)
     # PLOTTING
     # First we need to generate a list of all of the data points. Since we only calculated a quarter
     # of the chimney space, the rest of the point matrix needs to be rebuilt from the quarter size
