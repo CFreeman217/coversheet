@@ -73,12 +73,12 @@ def gather_input(inputfile,templatefile):
     assign = input('Enter Assignment Name or Number [{}] : '.format(courseinfo[c_select]['Asign']))
     if assign != '':
         courseinfo[c_select]['Asign'] = assign
-    if c_select == '385':
+    elif c_select == '385':
         if assign == '6':
             courseinfo[c_select]['Probs'] = 'CH 4 : 5, 10, 15, 19. 25, 32, 42'
             courseinfo[c_select]['Ddate'] = '030618'
         elif assign == '7':
-            courseinfo[c_select]['Probs'] = 'CH 4 : 52d. 56, 65. 91       CH 5 : 2. 4, 16. 18'
+            courseinfo[c_select]['Probs'] = 'CH 4 : 52d. 56, 65. 91\nCH 5 : 2. 4, 16. 18'
             courseinfo[c_select]['Ddate'] = '031318'
         elif assign == '8':
             courseinfo[c_select]['Probs'] = 'CH 5 : 28. 36, 44, 56'
