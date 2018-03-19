@@ -14,7 +14,7 @@ Input Offset Error (Interpolate Table 8)
 Total Error Referred to Input (RTI)
 = Input Error + (Output Error/G)
 Total Error Referred to Output (RTO)
-= (Input Error × G) + Output Error 
+= (Input Error × G) + Output Error
 
 
 Multimeter
@@ -26,9 +26,6 @@ Resistor Tolerance
 Gauge Factor S = 2.13
 Tolerance +/- 1.00%
 
-E_a =  V_o (R_2 + R_3)^2 
-      ---------------------
-      V_e * S * R_2 * R_3i
 
 
 NI 9234 DAQ System
