@@ -33,11 +33,11 @@ def prob_1():
         ret_poly = lambda val, eqn : sum([coef*val**(len(eqn)-(index+1)) for index, coef in enumerate(eqn)])
         # List comprehensions for computing displacement
         y_vals = np.array([ret_poly(i, regress) for i in x])
-        min_index, min_val = min(enumerate(y), key=lambda p: p[1])
-
-        print('Maximum Deflection: {:.4f} in. at Time : {:.6f} s'.format(min_val, x[min_index]))
+        min_d_index, min_d_val = min(enumerate(y), key=lambda p: p[1])
+        print('Maximum Deflection: {:.4f} in. at Time : {:.6f} s'.format(min_d_val, x[min_d_index]))
         # Compute velocity
         y_vel = np.array([dxdt(i, regress) for i in x])
+
         # Compute acceleration
         accel = np.array([d2xdt2(i, regress) for i in x])
         # Residuals for goodness of fit
@@ -46,7 +46,7 @@ def prob_1():
 
         plt.plot(x,y,label='Data Points')
         plt.plot(x,y_vals,linestyle='--',color='red',label='${}^t$$^h$ - Degree Poly-fit $R^2$ : {:.4f}'.format(degree_fit,err))
-        plt.scatter(x[min_index], min_val,label='Maximum Deflection: {:.4f} in. at Time : {:.6f} s'.format(min_val, x[min_index]))
+        plt.scatter(x[min_d_index], min_d_val,label='Maximum Deflection: {:.4f} in. at Time : {:.6f} s'.format(min_d_val, x[min_d_index]))
         plt.xlabel('Time (s)')
         plt.ylabel('Displacement (x)')
         plt.title('Impact and Displacement')
