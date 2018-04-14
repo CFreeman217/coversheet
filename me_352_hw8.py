@@ -9,7 +9,7 @@ def prob_1():
     import numpy as np
     import matplotlib.pyplot as plt
     import os
-    degree_fit = 4 # Degree of polynomial fit
+    degree_fit = 5 # Degree of polynomial fit
 
     if 'drop1.csv' in os.listdir('.'):
         x, y = np.loadtxt(open('drop1.csv'),delimiter=',',unpack=True,skiprows=2)
@@ -197,5 +197,5 @@ def prob_3():
 
 
 
-# prob_1()
-prob_3()
+prob_1()
+# prob_3()
